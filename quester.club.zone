@@ -1,0 +1,38 @@
+; ============================================================
+;  quester.club — DNS zone for GitHub Pages
+;  Repo:  github.com/Querent-ai/quester-quantum-club  (branch main, root)
+;  Import in GoDaddy: Domain → DNS → Records → ⋯ → Import Zone File
+;  GoDaddy keeps its own SOA/NS on import; those lines are informational.
+; ============================================================
+$ORIGIN quester.club.
+$TTL 600
+
+@       3600  IN  SOA  ns01.domaincontrol.com. dns.jomax.net. ( 2026111801 28800 7200 604800 600 )
+@       3600  IN  NS   ns01.domaincontrol.com.   ; replace with the two NS GoDaddy shows for this domain
+@       3600  IN  NS   ns02.domaincontrol.com.
+
+; --- Apex → GitHub Pages (IPv4) ---
+@        600  IN  A     185.199.108.153
+@        600  IN  A     185.199.109.153
+@        600  IN  A     185.199.110.153
+@        600  IN  A     185.199.111.153
+
+; --- Apex → GitHub Pages (IPv6) ---
+@        600  IN  AAAA  2606:50c0:8000::153
+@        600  IN  AAAA  2606:50c0:8001::153
+@        600  IN  AAAA  2606:50c0:8002::153
+@        600  IN  AAAA  2606:50c0:8003::153
+
+; --- www → org Pages host (GitHub redirects www → apex) ---
+www     3600  IN  CNAME querent-ai.github.io.
+
+; --- Only GitHub may issue TLS certs for this domain ---
+@       3600  IN  CAA   0 issue "letsencrypt.org"
+
+; --- Optional: GitHub verified-domain TXT (protects against takeover) ---
+;  Get the value from github.com/organizations/Querent-ai/settings/pages → Add a domain
+; _github-pages-challenge-Querent-ai  3600 IN TXT "PASTE-VALUE-FROM-GITHUB"
+
+; --- No mail on this domain: tell receivers to reject spoofed mail ---
+@       3600  IN  TXT   "v=spf1 -all"
+_dmarc  3600  IN  TXT   "v=DMARC1; p=reject; adkim=s; aspf=s"

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quester Quantum Club — quester → querent → quantum</title>
+<meta name="description" content="A passive Helmholtz field experience of what quantum would feel like. Every screen is keyed to a secret born in your own browser — no one else will ever see the field you see.">
+<meta property="og:title" content="Quester Quantum Club">
+<meta property="og:description" content="quester → querent → quantum. A passive Helmholtz field experience, keyed to each viewer.">
+<meta property="og:url" content="https://quester.club/">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#05060c">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2305060c'/%3E%3Ccircle cx='32' cy='32' r='17' fill='none' stroke='%237ee0ff' stroke-width='3'/%3E%3Cpath d='M38 38l10 10' stroke='%23ff9ad5' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#05060c; --ink:#e9ecf5; --dim:#8b93ab; --faint:#4a5068;
+    --phi:#7ee0ff;   /* irrotational: sources & sinks  ∇φ  */
+    --psi:#ff9ad5;   /* solenoidal: vortices          ∇×ψ */
+    --gold:#ffd27a;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-snap-type:y mandatory;scroll-behavior:smooth;background:var(--bg)}
+  body{color:var(--ink);font-family:var(--serif);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  section{position:relative;height:100vh;height:100svh;scroll-snap-align:start;overflow:hidden}
+  section canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .copy{position:absolute;left:clamp(20px,6vw,88px);bottom:clamp(28px,9vh,96px);max-width:min(560px,86vw);pointer-events:none;
+        text-shadow:0 0 24px var(--bg),0 0 6px var(--bg)}
+  .idx{font-family:var(--mono);font-size:12px;letter-spacing:.24em;color:var(--dim);text-transform:uppercase;margin-bottom:14px}
+  h1{font-weight:400;font-size:clamp(40px,8vw,104px);line-height:.95;letter-spacing:-.02em}
+  h2{font-weight:400;font-size:clamp(34px,5.4vw,68px);line-height:1;letter-spacing:-.01em;margin-bottom:16px}
+  p{font-size:clamp(16px,1.6vw,20px);line-height:1.5;color:#c9cfe0}
+  .eq{font-family:var(--mono);font-size:clamp(12px,1.2vw,14px);color:var(--dim);margin-top:18px;letter-spacing:.02em}
+  .eq b{color:var(--ink);font-weight:500}
+  .phi{color:var(--phi)} .psi{color:var(--psi)} .gold{color:var(--gold)}
+  .arrow{color:var(--faint);padding:0 .12em}
+  .hero .copy{bottom:auto;top:50%;transform:translateY(-50%)}
+  .hero p{margin-top:22px;max-width:30em}
+  .chip{position:fixed;top:16px;right:16px;z-index:5;font-family:var(--mono);font-size:11px;color:var(--dim);
+        border:1px solid #1d2133;background:rgba(5,6,12,.72);backdrop-filter:blur(8px);padding:8px 12px;border-radius:999px;
+        display:flex;gap:10px;align-items:center}
+  .chip i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px var(--gold)}
+  .chip button{all:unset;cursor:pointer;color:var(--ink);border-left:1px solid #1d2133;padding-left:10px}
+  .dots{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:5;display:flex;flex-direction:column;gap:10px}
+  .dots a{width:7px;height:7px;border-radius:50%;background:#2a2f45;display:block;transition:.3s}
+  .dots a.on{background:var(--ink);box-shadow:0 0 10px rgba(255,255,255,.5)}
+  .grid{position:absolute;right:clamp(20px,7vw,110px);top:50%;transform:translateY(-50%);display:grid;grid-template-columns:repeat(16,1fr);
+        gap:3px;width:min(40vw,360px)}
+  .grid span{aspect-ratio:1;border-radius:2px}
+  .hex{font-family:var(--mono);font-size:12px;color:var(--dim);word-break:break-all;margin-top:18px;line-height:1.7}
+  footer{position:absolute;left:0;right:0;bottom:18px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.06em}
+  footer a{color:var(--dim);text-decoration:none}
+  @media (max-width:720px){
+    .grid{position:relative;right:auto;top:auto;transform:none;width:78vw;margin:0 auto}
+    .keyscreen{display:flex;flex-direction:column;justify-content:center;gap:28px;padding-top:40px}
+    .keyscreen .copy{position:relative;left:auto;bottom:auto;margin:0 auto}
+    .dots{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="chip" aria-live="polite"><i></i><span id="chipKey">keying…</span><button id="drift" title="Auto-advance through screens">drift: on</button></div>
+<nav class="dots" id="dots"></nav>
+
+<section class="hero" data-scene="helmholtz">
+  <canvas></canvas>
+  <div class="copy">
+    <div class="idx">quester.club</div>
+    <h1>quester<span class="arrow">→</span><br>querent<span class="arrow">→</span><br><span class="gold">quantum</span></h1>
+    <p data-q>Nothing to click. Every screen here is a field, and the field is keyed to a secret born inside your own device. Watch it. No one else will ever see this exact flow.</p>
+  </div>
+</section>
+
+<section data-scene="superposition">
+  <canvas></canvas>
+  <div class="copy">
+    <div class="idx">01 · superposition</div>
+    <h2>Two natures, one flow.</h2>
+    <p data-q>Helmholtz says every field is a sum of what <span class="phi">pours out</span> and what <span class="psi">turns around</span>. Here the flow is both at once, its weight drifting between them and never settling.</p>
+    <div class="eq">|F⟩ = <b class="phi" id="alpha">α</b>·|∇φ⟩ + <b class="psi" id="beta">β</b>·|∇×ψ⟩</div>
+  </div>
+</section>
+
+<section data-scene="interference">
+  <canvas></canvas>
+  <div class="copy">
+    <div class="idx">02 · interference</div>
+    <h2>Possibility adds up.</h2>
+    <p data-q>Waves from sources only your key knows meet and stack. Bright where they agree, dark where they cancel. Before anything is measured, this is all there is.</p>
+    <div class="eq">I(x) = |Σ<sub>k</sub> A<sub>k</sub> e<sup>i(k·r − ωt + θ<sub>k</sub>)</sup>|²</div>
+  </div>
+</section>
+
+<section data-scene="entanglement">
+  <canvas></canvas>
+  <div class="copy">
+    <div class="idx">03 · entanglement</div>
+    <h2>Far apart, never separate.</h2>
+    <p data-q>Each trace on the left has a partner on the right, turning the opposite way. Neither one has a direction of its own. They have a relationship instead.</p>
+    <div class="eq">|Ψ⟩ = (|↻⟩<sub>L</sub>|↺⟩<sub>R</sub> − |↺⟩<sub>L</sub>|↻⟩<sub>R</sub>) / √2</div>
+  </div>
+</section>
+
+<section data-scene="uncertainty">
+  <canvas></canvas>
+  <div class="copy">
+    <div class="idx">04 · uncertainty</div>
+    <h2>Where, or how fast. Not both.</h2>
+    <p data-q>As the cloud tightens around a place, every streak grows long and restless. As it relaxes, motion calms. The product of the two never falls below a floor.</p>
+    <div class="eq">σ<sub>x</sub> = <b id="sx">—</b> · σ<sub>p</sub> = <b id="sp">—</b> · product ≥ <b class="gold">ħ/2</b></div>
+  </div>
+</section>
+
+<section data-scene="measurement">
+  <canvas></canvas>
+  <div class="copy">
+    <div class="idx">05 · measurement</div>
+    <h2>Look, and it chooses.</h2>
+    <p data-q>The whole field flows freely until a look arrives. Then everything falls to one point, and from that point, possibility opens again.</p>
+    <div class="eq">state: <b id="mstate">evolving</b></div>
+  </div>
+</section>
+
+<section class="keyscreen" data-scene="key">
+  <canvas></canvas>
+  <div class="grid" id="grid"></div>
+  <div class="copy">
+    <div class="idx">06 · your key</div>
+    <h2>This field was yours.</h2>
+    <p data-q>256 bits were drawn from your device's own randomness when this page opened. They shaped every vortex, source and phase you saw. They never left your browser, and they vanish when you close it.</p>
+    <div class="hex" id="hex"></div>
+  </div>
+  <footer>Quester Quantum Club · a <a href="https://pqrs.io">PQRS</a> / <a href="https://querents.com">Querent</a> showcase · <a href="mailto:contact@querent.xyz">contact@querent.xyz</a></footer>
+</section>
+
+<script>
+(async () => {
+  "use strict";
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- 1. Viewer key: 256 bits from this device, hashed, never transmitted ---------- */
+  const raw = crypto.getRandomValues(new Uint8Array(32));
+  const stamp = new TextEncoder().encode(String(performance.now()) + navigator.userAgent);
+  const mix = new Uint8Array(raw.length + stamp.length); mix.set(raw); mix.set(stamp, raw.length);
+  const key = new Uint8Array(await crypto.subtle.digest("SHA-256", mix));
+  const hex = [...key].map(b => b.toString(16).padStart(2, "0")).join("");
+  document.getElementById("chipKey").textContent = "key " + hex.slice(0, 4) + "…" + hex.slice(-4);
+  document.getElementById("hex").textContent = hex.match(/.{1,16}/g).join(" ");
+
+  // Deterministic PRNG per scene, seeded by key words (mulberry32)
+  const word = i => (key[i*4] | key[i*4+1] << 8 | key[i*4+2] << 16 | key[i*4+3] << 24) >>> 0;
+  const rng = seed => () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const gauss = r => { let u = 0, v = 0; while (!u) u = r(); while (!v) v = r(); return Math.sqrt(-2*Math.log(u)) * Math.cos(2*Math.PI*v); };
+
+  /* ---------- 2. Helmholtz field: F = ∇φ (sources/sinks) + ∇×ψ (vortices) ---------- */
+  function makeField(r, nV, nS) {
+    const mk = (sign) => ({ ax: .15 + .7*r(), ay: .15 + .7*r(), fx: .03 + .07*r(), fy: .03 + .07*r(), p: 6.28*r(),
+                            g: sign * (.6 + .8*r()) * (r() < .5 ? -1 : 1), s2: .02 + .05*r() });
+    return { V: Array.from({length:nV}, () => mk(1)), S: Array.from({length:nS}, () => mk(1)) };
+  }
+  // returns [curlX, curlY, divX, divY] at normalized (x,y)
+  function sample(F, x, y, t, aspect) {
+    let cx = 0, cy = 0, dx = 0, dy = 0;
+    for (const v of F.V) {
+      const px = (v.ax + .12*Math.sin(t*v.fx + v.p)) * aspect, py = v.ay + .12*Math.cos(t*v.fy + v.p);
+      const ex = x - px, ey = y - py, e = Math.exp(-(ex*ex + ey*ey)/v.s2) * v.g / v.s2;
+      cx += -2*ey*e; cy += 2*ex*e;                       // (∂ψ/∂y, −∂ψ/∂x)
+    }
+    for (const s of F.S) {
+      const px = (s.ax + .12*Math.cos(t*s.fx + s.p)) * aspect, py = s.ay + .12*Math.sin(t*s.fy + s.p);
+      const ex = x - px, ey = y - py, e = Math.exp(-(ex*ex + ey*ey)/s.s2) * s.g / s.s2;
+      dx += 2*ex*e; dy += 2*ey*e;                        // ∇φ with φ = −q·e^(−r²/s²)
+    }
+    return [cx, cy, dx, dy];
+  }
+
+  /* ---------- 3. Canvas plumbing ---------- */
+  function setup(canvas) {
+    const ctx = canvas.getContext("2d");
+    const st = { ctx, W: 0, H: 0, dpr: 1 };
+    const fit = () => { st.dpr = Math.min(devicePixelRatio || 1, 2);
+      st.W = canvas.clientWidth; st.H = canvas.clientHeight;
+      canvas.width = st.W * st.dpr; canvas.height = st.H * st.dpr; ctx.setTransform(st.dpr,0,0,st.dpr,0,0);
+      ctx.fillStyle = "#05060c"; ctx.fillRect(0,0,st.W,st.H); };
+    fit(); addEventListener("resize", fit);
+    return st;
+  }
+  const fade = (st, a) => { st.ctx.fillStyle = `rgba(5,6,12,${a})`; st.ctx.fillRect(0,0,st.W,st.H); };
+  const PHI = [126,224,255], PSI = [255,154,213];
+  const lerpC = (a, b, k) => a.map((v,i) => Math.round(v + (b[i]-v)*k));
+
+  /* ---------- 4. Scenes ---------- */
+  const scenes = {};
+
+  function particles(st, r, n) {
+    const P = []; for (let i = 0; i < n; i++) P.push({ x: r()*st.W, y: r()*st.H, l: r()*200 });
+    return P;
+  }
+  function flowScene(seedIdx, opts) {
+    return (canvas) => {
+      const st = setup(canvas), r = rng(word(seedIdx));
+      const F = makeField(r, opts.v, opts.s);
+      let P = particles(st, r, opts.n);
+      return (t) => {
+        const { ctx, W, H } = st, U = Math.min(W, H), asp = W / U;
+        fade(st, .045);
+        const w = opts.weight ? opts.weight(t) : .5;
+        ctx.lineWidth = 1.4;
+        for (const p of P) {
+          const [cx, cy, dx, dy] = sample(F, p.x/U, p.y/U, t, asp);
+          const vx = (1-w)*dx + w*cx, vy = (1-w)*dy + w*cy;
+          const sp = Math.hypot(vx, vy) || 1e-6, k = Math.min(1.8, sp*.06) / sp * U * .004;
+          const nx = p.x + vx*k, ny = p.y + vy*k;
+          const mag = Math.hypot(cx,cy) / (Math.hypot(cx,cy) + Math.hypot(dx,dy) + 1e-6);
+          const c = lerpC(PHI, PSI, opts.weight ? w : mag);
+          ctx.strokeStyle = `rgba(${c},.85)`;
+          ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(nx, ny); ctx.stroke();
+          p.x = nx; p.y = ny; p.l--;
+          if (p.l < 0 || nx < 0 || ny < 0 || nx > W || ny > H) { p.x = r()*W; p.y = r()*H; p.l = 80 + r()*220; }
+        }
+        if (opts.after) opts.after(t, w);
+      };
+    };
+  }
+
+  scenes.helmholtz = flowScene(0, { v: 7, s: 5, n: 2200 });
+
+  const aEl = document.getElementById("alpha"), bEl = document.getElementById("beta");
+  scenes.superposition = flowScene(1, { v: 6, s: 6, n: 2400,
+    weight: t => .5 + .5*Math.sin(t*.22),
+    after: (t, w) => { aEl.textContent = Math.sqrt(1-w).toFixed(2); bEl.textContent = Math.sqrt(w).toFixed(2); } });
+
+  scenes.interference = (canvas) => {
+    const st = setup(canvas), r = rng(word(2));
+    const src = Array.from({length: 4}, () => ({ x: .2 + .6*r(), y: .2 + .6*r(), th: 6.28*r(), k: 70 + 50*r() }));
+    const lw = 220, off = document.createElement("canvas"); off.width = lw;
+    const octx = off.getContext("2d"); let img, lh = 0;
+    return (t) => {
+      const { ctx, W, H } = st;
+      const h = Math.max(2, Math.round(lw * H / W));
+      if (h !== lh) { lh = h; off.height = h; img = octx.createImageData(lw, h); }
+      const d = img.data, asp = W / H;
+      for (let j = 0; j < h; j++) for (let i = 0; i < lw; i++) {
+        const x = i / lw * asp, y = j / h; let re = 0, im = 0;
+        for (const s of src) {
+          const sx = (s.x + .05*Math.sin(t*.13 + s.th)) * asp, sy = s.y + .05*Math.cos(t*.11 + s.th);
+          const rr = Math.hypot(x - sx, y - sy) + .02, ph = s.k*rr - t*1.6 + s.th, a = 1/Math.sqrt(rr);
+          re += a*Math.cos(ph); im += a*Math.sin(ph);
+        }
+        const I = Math.min(1, (re*re + im*im) / 60), q = (j*lw + i) * 4, c = Math.atan2(im, re) / 6.283 + .5;
+        d[q]   = (PHI[0]*(1-c) + PSI[0]*c) * I;
+        d[q+1] = (PHI[1]*(1-c) + PSI[1]*c) * I;
+        d[q+2] = (PHI[2]*(1-c) + PSI[2]*c) * I;
+        d[q+3] = 255;
+      }
+      octx.putImageData(img, 0, 0);
+      ctx.imageSmoothingEnabled = true; ctx.drawImage(off, 0, 0, W, H);
+    };
+  };
+
+  scenes.entanglement = (canvas) => {
+    const st = setup(canvas), r = rng(word(3)), F = makeField(r, 5, 2);
+    let P = []; const n = 1100;
+    const spawn = p => { p.x = r()*st.W/2; p.y = r()*st.H; p.l = 120 + r()*200; };
+    for (let i = 0; i < n; i++) { const p = {}; spawn(p); P.push(p); }
+    return (t) => {
+      const { ctx, W, H } = st, U = Math.min(W/2, H), asp = (W/2) / U;
+      fade(st, .07); ctx.lineWidth = 1.1;
+      ctx.strokeStyle = "rgba(255,255,255,.06)"; ctx.beginPath(); ctx.moveTo(W/2, 0); ctx.lineTo(W/2, H); ctx.stroke();
+      for (let i = 0; i < P.length; i++) {
+        const p = P[i];
+        const [cx, cy, dx, dy] = sample(F, p.x/U, p.y/U, t, asp);
+        const vx = cx + .3*dx, vy = cy + .3*dy, sp = Math.hypot(vx,vy) || 1e-6, k = Math.min(1.6, sp*.06)/sp*U*.005;
+        const nx = p.x + vx*k, ny = p.y + vy*k;
+        ctx.strokeStyle = `rgba(${PHI},.8)`; ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(nx, ny); ctx.stroke();
+        ctx.strokeStyle = `rgba(${PSI},.8)`; ctx.beginPath(); ctx.moveTo(W - p.x, p.y); ctx.lineTo(W - nx, ny); ctx.stroke();
+        if (i % 140 === 0) { ctx.strokeStyle = "rgba(255,210,122,.05)"; ctx.beginPath(); ctx.moveTo(nx, ny); ctx.lineTo(W - nx, ny); ctx.stroke(); }
+        p.x = nx; p.y = ny; p.l--;
+        if (p.l < 0 || nx < 0 || ny < 0 || nx > W/2 || ny > H) spawn(p);
+      }
+    };
+  };
+
+  const sxEl = document.getElementById("sx"), spEl = document.getElementById("sp");
+  scenes.uncertainty = (canvas) => {
+    const st = setup(canvas), r = rng(word(4)), n = 1400;
+    const P = Array.from({length: n}, () => ({ zx: gauss(r), zy: gauss(r), px: gauss(r), py: gauss(r), w: r() }));
+    return (t) => {
+      const { ctx, W, H } = st, U = Math.min(W, H);
+      fade(st, .22);
+      const sx = .5 + .42*Math.sin(t*.35) + .55, sp = 1 / sx;            // σx·σp = 1 (the floor)
+      sxEl.textContent = sx.toFixed(2); spEl.textContent = sp.toFixed(2);
+      const cx = W * .62, cy = H * .48, base = U * .09;
+      ctx.lineWidth = 1;
+      for (const p of P) {
+        p.px += (gauss(r) * .15 - p.px * .02); p.py += (gauss(r) * .15 - p.py * .02);
+        const x = cx + p.zx*base*sx, y = cy + p.zy*base*sx, L = base*.35*sp;
+        const c = lerpC(PHI, PSI, Math.min(1, sp/2));
+        ctx.strokeStyle = `rgba(${c},.6)`;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + p.px*L, y + p.py*L); ctx.stroke();
+      }
+    };
+  };
+
+  const mEl = document.getElementById("mstate");
+  scenes.measurement = (canvas) => {
+    const st = setup(canvas), r = rng(word(5)), F = makeField(r, 6, 4);
+    let P = particles(st, r, 2000), lastCycle = -1, target = [0, 0];
+    return (t) => {
+      const { ctx, W, H } = st, U = Math.min(W, H), asp = W / U;
+      const T = 10, ph = t % T, cyc = Math.floor(t / T);
+      if (cyc !== lastCycle) { lastCycle = cyc; target = [W*(.3 + .5*r()), H*(.25 + .5*r())]; }
+      let mode = ph < 6.5 ? "evolving" : ph < 7.4 ? "collapsing" : ph < 8.2 ? "measured" : "re-opening";
+      mEl.textContent = mode;
+      fade(st, mode === "measured" ? .25 : .07); ctx.lineWidth = 1.1;
+      for (const p of P) {
+        let nx, ny;
+        if (mode === "collapsing") { nx = p.x + (target[0]-p.x)*.16; ny = p.y + (target[1]-p.y)*.16; }
+        else if (mode === "measured") { nx = target[0] + gauss(r)*1.5; ny = target[1] + gauss(r)*1.5; }
+        else if (mode === "re-opening" && !p.burst) { p.burst = [gauss(r)*U*.012, gauss(r)*U*.012]; nx = p.x; ny = p.y; }
+        else {
+          const [cx, cy, dx, dy] = sample(F, p.x/U, p.y/U, t, asp);
+          let vx = cx + .5*dx, vy = cy + .5*dy; const sp = Math.hypot(vx,vy) || 1e-6, k = Math.min(1.6, sp*.06)/sp*U*.004;
+          nx = p.x + vx*k; ny = p.y + vy*k;
+          if (p.burst) { nx += p.burst[0]; ny += p.burst[1]; p.burst[0] *= .94; p.burst[1] *= .94; }
+        }
+        if (mode === "evolving") p.burst = null;
+        const c = mode === "measured" ? [255,210,122] : lerpC(PHI, PSI, (p.y / H));
+        ctx.strokeStyle = `rgba(${c},.85)`;
+        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(nx, ny); ctx.stroke();
+        p.x = nx; p.y = ny;
+        if (mode === "evolving" && (nx < 0 || ny < 0 || nx > W || ny > H)) { p.x = r()*W; p.y = r()*H; }
+      }
+    };
+  };
+
+  const grid = document.getElementById("grid"), cells = [];
+  for (let i = 0; i < 256; i++) { const s = document.createElement("span"); grid.appendChild(s); cells.push(s); }
+  scenes.key = (canvas) => {
+    const inner = flowScene(6, { v: 4, s: 3, n: 900 })(canvas);
+    return (t) => {
+      inner(t);
+      for (let i = 0; i < 256; i++) {
+        const bit = (key[i >> 3] >> (i & 7)) & 1, wave = .5 + .5*Math.sin(t*.8 - (i % 16)*.35 - (i >> 4)*.2);
+        cells[i].style.background = bit
+          ? `rgba(255,154,213,${.35 + .6*wave})` : `rgba(126,224,255,${.08 + .25*wave})`;
+      }
+    };
+  };
+
+  /* ---------- 5. "Decrypt" the words: each caption decoheres into place ---------- */
+  const glyphs = "∇×ψφ∂Σ∫ħ⟩⟨αβθ01·∞≈";
+  function decohere(el) {
+    if (el._done) return; el._done = true;
+    const nodes = []; const walk = n => n.childNodes.forEach(c => c.nodeType === 3 ? nodes.push(c) : walk(c));
+    walk(el); const orig = nodes.map(n => n.textContent);
+    const total = orig.reduce((a, s) => a + s.length, 0), r = rng(word(7)); let start = null;
+    const step = (ts) => {
+      start ??= ts; const k = Math.min(1, (ts - start) / 1600), cut = Math.floor(k * total); let seen = 0;
+      nodes.forEach((n, i) => { const s = orig[i];
+        n.textContent = [...s].map((ch, j) => (seen + j < cut || ch === " ") ? ch : glyphs[Math.floor(r()*glyphs.length)]).join("");
+        seen += s.length; });
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  /* ---------- 6. Run only the visible screen ---------- */
+  const sections = [...document.querySelectorAll("section")];
+  const dots = document.getElementById("dots");
+  sections.forEach((s, i) => { const a = document.createElement("a"); a.href = "#"; a.setAttribute("aria-label", "screen " + (i+1));
+    a.onclick = e => { e.preventDefault(); s.scrollIntoView(); pause(); }; dots.appendChild(a); });
+  const runners = new Map(); let active = null, current = 0;
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting && e.intersectionRatio > .55) {
+      active = e.target; current = sections.indexOf(active);
+      [...dots.children].forEach((d, i) => d.classList.toggle("on", i === current));
+      if (!runners.has(active)) runners.set(active, scenes[active.dataset.scene](active.querySelector("canvas")));
+      active.querySelectorAll("[data-q]").forEach(decohere);
+    }
+  }), { threshold: [.55] });
+  sections.forEach(s => io.observe(s));
+
+  const t0 = performance.now();
+  const loop = (now) => { const t = (now - t0) / 1000 * (reduce ? .25 : 1);
+    if (active && runners.has(active)) runners.get(active)(t); requestAnimationFrame(loop); };
+  requestAnimationFrame(loop);
+
+  /* ---------- 7. Drift: passive auto-advance, yields to any touch ---------- */
+  let drift = !reduce, idleUntil = 0;
+  const btn = document.getElementById("drift");
+  const paint = () => btn.textContent = "drift: " + (drift ? "on" : "off"); paint();
+  btn.onclick = () => { drift = !drift; paint(); };
+  function pause() { idleUntil = performance.now() + 45000; }
+  ["wheel", "touchstart", "keydown"].forEach(ev => addEventListener(ev, pause, { passive: true }));
+  setInterval(() => { if (!drift || performance.now() < idleUntil) return;
+    sections[(current + 1) % sections.length].scrollIntoView(); }, 18000);
+})();
+</script>
+</body>
+</html>
