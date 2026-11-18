@@ -26,7 +26,7 @@ $TTL 600
 ; --- www → org Pages host (GitHub redirects www → apex) ---
 www     3600  IN  CNAME querent-ai.github.io.
 
-; --- Only GitHub may issue TLS certs for this domain ---
+; --- Only Let's Encrypt (the CA GitHub Pages uses) may issue TLS certs ---
 @       3600  IN  CAA   0 issue "letsencrypt.org"
 
 ; --- Optional: GitHub verified-domain TXT (protects against takeover) ---
